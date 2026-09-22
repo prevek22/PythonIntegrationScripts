@@ -11,8 +11,7 @@ def get_token(client_id, client_secret, token_url):
     if not access_token:
         print("Error: Failed to retrieve access token.")
 
-#Adding comment for testing
-def get_new_token(client_id, client_secret, token_url):
+def get_token_new(client_id, client_secret, token_url):
     response = requests.post(token_url, auth=(client_id, client_secret), timeout=30)
     response.raise_for_status()
     token_data = response.json()
