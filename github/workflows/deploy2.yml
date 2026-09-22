@@ -1,0 +1,36 @@
+name: Deploy to Azure Function App
+
+on:
+  push:
+    branches:
+      - main   # change to your default branch
+
+env:
+  AZURE_FUNCTIONAPP_NAME: 'your-function-app-name'   # exact name from Azure Portal
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                # path to your function app project
+  PYTHON_VERSION: '3.11'                             # match your app's runtime
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+
+      - name: Deploy to Azure Functions
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
